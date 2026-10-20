@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS conversations (
     source_id        VARCHAR(32),                     -- ex : "EDT001" (FAQ) ou "PROC002" (procédure)
     categorie        VARCHAR(64),                     -- ex : "emploi_temps"
     score            REAL,                            -- confiance de la recherche (0 à 1)
-    statut           VARCHAR(20)  NOT NULL,           -- repondu | non_compris | bloque | limite | small_talk
+    statut           VARCHAR(20)  NOT NULL,           -- repondu | clarification | non_compris | bloque | small_talk
     temps_reponse_ms INTEGER,                         -- durée de traitement en millisecondes
     created_at       TIMESTAMPTZ  NOT NULL DEFAULT NOW()  -- horodatage (timestamp)
 );

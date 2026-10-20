@@ -1,0 +1,45 @@
+# Décrit les "boîtes" (conteneurs) du projet. Lancer tout : docker compose up --build
+services:
+
+  # Base de données PostgreSQL
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: assistant
+      POSTGRES_USER: assistant
+      POSTGRES_PASSWORD: assistant_dev   # mot de passe de DÉVELOPPEMENT uniquement
+    volumes:
+      - pgdata:/var/lib/postgresql/data                        # les données survivent à l'arrêt
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro  # création des tables au 1er démarrage
+    healthcheck:   # Docker vérifie régulièrement que la base est prête
+      test: ["CMD-SHELL", "pg_isready -U assistant -d assistant"]
+      interval: 3s
+      retries: 10
+
+  # Serveur Python (Flask) : l'API du chatbot
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://assistant:assistant_dev@db:5432/assistant  # "db" = nom du service ci-dessus
+      DATA_DIR: /data
+    volumes:
+      - ./backend:/app            # le code du Mac est visible dans le conteneur (rechargement auto)
+      - ./data/clean:/data:ro     # les données nettoyées, en lecture seule (ro = read only)
+    ports:
+      - "5001:5000"   # port 5001 du Mac -> port 5000 du conteneur (le 5000 est pris par AirPlay sur Mac)
+    depends_on:
+      db:
+        condition: service_healthy   # on attend que la base soit prête
+
+  # Interface web (React + Vite)
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend/src:/app/src   # rechargement auto quand on modifie le code React
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

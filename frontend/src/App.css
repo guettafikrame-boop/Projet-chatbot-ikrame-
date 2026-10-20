@@ -1,0 +1,152 @@
+/* Variables de couleurs : on les change ici et tout le site suit */
+:root {
+  --primaire: #0f766e;
+  --primaire-clair: #ccfbf1;
+  --fond: #f1f5f9;
+  --carte: #ffffff;
+  --texte: #0f172a;
+  --texte-doux: #64748b;
+  --bordure: #e2e8f0;
+  --erreur: #fee2e2;
+}
+
+/* Mode sombre automatique si le Mac/téléphone est en mode sombre */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primaire: #2dd4bf;
+    --primaire-clair: #134e4a;
+    --fond: #0f172a;
+    --carte: #1e293b;
+    --texte: #f1f5f9;
+    --texte-doux: #94a3b8;
+    --bordure: #334155;
+    --erreur: #7f1d1d;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--fond);
+  color: var(--texte);
+}
+
+/* Mise en page : colonne centrée qui occupe toute la hauteur de l'écran */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 820px;
+  margin: 0 auto;
+  background: var(--carte);
+  border-left: 1px solid var(--bordure);
+  border-right: 1px solid var(--bordure);
+}
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--bordure);
+}
+.entete h1 { margin: 0; font-size: 1.25rem; }
+.entete p { margin: 2px 0 0; color: var(--texte-doux); font-size: 0.85rem; }
+
+.chat {
+  flex: 1;            /* prend toute la place restante */
+  overflow-y: auto;   /* barre de défilement si trop de messages */
+  padding: 16px;
+}
+
+.ligne { display: flex; margin-bottom: 10px; }
+.ligne.user { justify-content: flex-end; }
+
+.bulle {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  line-height: 1.45;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+.bulle.bot { background: var(--fond); border-bottom-left-radius: 4px; }
+.bulle.user { background: var(--primaire); color: white; border-bottom-right-radius: 4px; }
+.bulle.erreur, .bulle.bloque { background: var(--erreur); }
+.bulle.ecrit { color: var(--texte-doux); letter-spacing: 2px; }
+.espace { height: 8px; }
+.puce { padding-left: 8px; }
+
+.puces-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.puces-suggestions button {
+  border: 1px solid var(--primaire);
+  background: var(--carte);
+  color: var(--primaire);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: left;
+}
+.puces-suggestions button:hover { background: var(--primaire-clair); }
+
+.suggestions-depart { padding: 0 16px 8px; }
+.suggestions-depart p { margin: 0; color: var(--texte-doux); font-size: 0.85rem; }
+
+.saisie {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--bordure);
+}
+.saisie input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  font-size: 1rem;   /* 16px minimum : évite le zoom automatique sur iPhone */
+  background: var(--carte);
+  color: var(--texte);
+}
+.saisie button, .bandeau-rgpd button {
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--primaire);
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.saisie button:disabled { opacity: 0.5; cursor: default; }
+
+.bouton-secondaire {
+  border: 1px solid var(--bordure);
+  background: transparent;
+  color: var(--texte);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.bandeau-rgpd {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  background: var(--primaire-clair);
+}
+.bandeau-rgpd button { padding: 8px 14px; white-space: nowrap; }
+
+/* Responsive (US-004) : ajustements pour les petits écrans (téléphone) */
+@media (max-width: 600px) {
+  .app { border: none; }
+  .bulle { max-width: 92%; }
+  .bouton-secondaire { font-size: 0; padding: 8px 12px; }   /* on cache le texte… */
+  .bouton-secondaire::first-letter { font-size: 1.1rem; }   /* …on garde l'icône ↻ */
+}
