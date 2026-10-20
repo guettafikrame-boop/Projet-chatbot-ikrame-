@@ -28,13 +28,20 @@ function ecrireStockage(cle, valeur) {
   }
 }
 
-// Identifiant ANONYME de conversation : un nombre aléatoire, aucune donnée personnelle (RGPD)
-const nouvelleSession = () => crypto.randomUUID()
+// Identifiant ANONYME de conversation : un nombre aléatoire, aucune donnée personnelle (RGPD).
+// crypto.randomUUID n'existe pas dans les anciens navigateurs : on prévoit une solution de secours.
+const nouvelleSession = () =>
+  typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2)
 
 export default function App() {
   // useState = une "variable" dont le changement redessine l'écran
   const [sessionId, setSessionId] = useState(() => lireStockage('sessionId', nouvelleSession()))
-  const [messages, setMessages] = useState(() => lireStockage('messages', [MESSAGE_ACCUEIL]))
+  const [messages, setMessages] = useState(() => {
+    const sauvegarde = lireStockage('messages', null)
+    return Array.isArray(sauvegarde) && sauvegarde.length > 0 ? sauvegarde : [MESSAGE_ACCUEIL]
+  })
   const [saisie, setSaisie] = useState('')
   const [enCours, setEnCours] = useState(false)
   const [suggestions, setSuggestions] = useState([])
@@ -53,7 +60,7 @@ export default function App() {
   useEffect(() => {
     fetch(`${API_URL}/api/suggestions`)
       .then((r) => r.json())
-      .then((d) => setSuggestions(d.suggestions))
+      .then((d) => setSuggestions(Array.isArray(d.suggestions) ? d.suggestions : []))
       .catch(() => setSuggestions([]))
   }, [])
 
