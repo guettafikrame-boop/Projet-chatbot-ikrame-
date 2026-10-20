@@ -49,12 +49,14 @@ export default function App() {
   const finDuChat = useRef(null)
 
   // useEffect = "fais ceci quand… change". Ici : sauvegarde à chaque changement.
-  useEffect(() => ecrireStockage('messages', messages), [messages])
-  useEffect(() => ecrireStockage('sessionId', sessionId), [sessionId])
-  useEffect(() => ecrireStockage('consentement', consentement), [consentement])
+  // ⚠️ Toujours des accolades { } : sans elles, la flèche RENVOIE le résultat de la fonction,
+  // et React croit que c'est une fonction de "nettoyage" à appeler plus tard.
+  useEffect(() => { ecrireStockage('messages', messages) }, [messages])
+  useEffect(() => { ecrireStockage('sessionId', sessionId) }, [sessionId])
+  useEffect(() => { ecrireStockage('consentement', consentement) }, [consentement])
 
   // Défile automatiquement vers le dernier message
-  useEffect(() => finDuChat.current?.scrollIntoView({ behavior: 'smooth' }), [messages, enCours])
+  useEffect(() => { finDuChat.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, enCours])
 
   // Au démarrage : on récupère les questions fréquentes (US-005)
   useEffect(() => {
